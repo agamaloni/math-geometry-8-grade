@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חידון משולש שווה שוקיים - תכונות מיוחדות</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .title {
+            font-size: 2.5em;
+            color: #4a5568;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #718096;
+            margin-bottom: 20px;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .score-item {
+            background: linear-gradient(45deg, #4299e1, #3182ce);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(66, 153, 225, 0.3);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .score-item:hover {
+            transform: translateY(-3px);
+        }
+        
+        .score-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .score-value {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .question-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-right: 5px solid #4299e1;
+            transform: scale(0.98);
+            animation: slideIn 0.5s ease forwards;
+        }
+        
+        @keyframes slideIn {
+            to { transform: scale(1); }
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .question-number {
+            background: linear-gradient(45deg, #ed64a6, #d53f8c);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(237, 100, 166, 0.3);
+        }
+        
+        .question-text {
+            font-size: 1.3em;
+            color: #2d3748;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .options {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option:hover {
+            border-color: #4299e1;
+            background: #ebf8ff;
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            border-color: #4299e1;
+            background: #ebf8ff;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+        
+        .option.correct {
+            border-color: #48bb78;
+            background: #f0fff4;
+            color: #22543d;
+        }
+        
+        .option.incorrect {
+            border-color: #f56565;
+            background: #fff5f5;
+            color: #742a2a;
+        }
+        
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(66, 153, 225, 0.1));
+            transition: width 0.3s ease;
+        }
+        
+        .option:hover::before {
+            width: 100%;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            color: white;
+            box-shadow: 0 8px 16px rgba(72, 187, 120, 0.3);
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(72, 187, 120, 0.4);
+        }
+        
+        .btn-submit:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-next {
+            background: linear-gradient(45deg, #4299e1, #3182ce);
+            color: white;
+            box-shadow: 0 8px 16px rgba(66, 153, 225, 0.3);
+        }
+        
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(66, 153, 225, 0.4);
+        }
+        
+        .btn-restart {
+            background: linear-gradient(45deg, #ed8936, #dd6b20);
+            color: white;
+            box-shadow: 0 8px 16px rgba(237, 137, 54, 0.3);
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(237, 137, 54, 0.4);
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            border-right: 5px solid;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .feedback.correct {
+            background: #f0fff4;
+            border-color: #48bb78;
+            color: #22543d;
+        }
+        
+        .feedback.incorrect {
+            background: #fff5f5;
+            border-color: #f56565;
+            color: #742a2a;
+        }
+        
+        .explanation {
+            margin-top: 15px;
+            font-size: 1.1em;
+            line-height: 1.6;
+            padding: 15px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 8px;
+        }
+        
+        .final-results {
+            text-align: center;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 2px solid #4299e1;
+        }
+        
+        .final-score {
+            font-size: 3em;
+            color: #4299e1;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .performance {
+            font-size: 1.5em;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .excellent { background: #f0fff4; color: #22543d; }
+        .good { background: #fffaf0; color: #744210; }
+        .fair { background: #fff5f5; color: #742a2a; }
+        
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #4299e1, #3182ce);
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .title {
+                font-size: 2em;
+            }
+            
+            .score-board {
+                gap: 15px;
+            }
+            
+            .question-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">📐 חידון משולש שווה שוקיים</h1>
+            <p class="subtitle">תכונות מיוחדות ויישומים גיאומטריים</p>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+        
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-label">שאלה נוכחית</div>
+                <div class="score-value" id="currentQuestion">1</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">סך השאלות</div>
+                <div class="score-value" id="totalQuestions">12</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">ציון</div>
+                <div class="score-value" id="score">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">אחוז הצלחה</div>
+                <div class="score-value" id="percentage">0%</div>
+            </div>
+        </div>
+        
+        <div id="questionContainer" class="question-container">
+            <div class="question-header">
+                <div class="question-number" id="questionNumber">1</div>
+                <h2>שאלה <span id="questionIndex">1</span> מתוך <span id="totalQuestionsText">12</span></h2>
+            </div>
+            
+            <div class="question-text" id="questionText"></div>
+            
+            <div class="options" id="optionsContainer"></div>
+            
+            <div class="buttons">
+                <button class="btn btn-submit" id="submitBtn" onclick="submitAnswer()">בדוק תשובה</button>
+                <button class="btn btn-next hidden" id="nextBtn" onclick="nextQuestion()">שאלה הבאה</button>
+            </div>
+            
+            <div id="feedback" class="feedback hidden"></div>
+        </div>
+        
+        <div id="finalResults" class="final-results hidden">
+            <h2>🎉 סיימת את החידון!</h2>
+            <div class="final-score" id="finalScore">0/12</div>
+            <div class="performance" id="performanceMessage"></div>
+            <button class="btn btn-restart" onclick="restartQuiz()">התחל מחדש</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "מהי ההגדרה של משולש שווה שוקיים?",
+                options: [
+                    "משולש שכל צלעותיו שוות",
+                    "משולש ששתי צלעותיו שוות",
+                    "משולש שכל זוויותיו שוות",
+                    "משולש שיש לו זווית ישרה"
+                ],
+                correct: 1,
+                explanation: "משולש שווה שוקיים הוא משולש ששתי צלעותיו שוות זו לזו. הצלעות השוות נקראות 'שוקיים' והצלע השלישית נקראת 'בסיס'."
+            },
+            {
+                question: "ציין את שמות הצלעות השונות במשולש שווה שוקיים:",
+                options: [
+                    "כל הצלעות נקראות שוקיים",
+                    "יש שתי צלעות הנקראות 'שוקיים' וצלע אחת הנקראת 'בסיס'",
+                    "יש שלוש צלעות שונות: גדולה, בינונית וקטנה",
+                    "יש רק צלע אחת חשובה - הבסיס"
+                ],
+                correct: 1,
+                explanation: "במשולש שווה שוקיים יש שתי צלעות שוות הנקראות 'שוקיים' והצלע השלישית (שונה באורכה) נקראת 'בסיס'."
+            },
+            {
+                question: "מהי התכונה המרכזית של זוויות הבסיס במשולש שווה שוקיים?",
+                options: [
+                    "הן זוויות ישרות (90 מעלות)",
+                    "הן שוות זו לזו",
+                    "הן חדות תמיד",
+                    "הן גדולות מזווית הראש"
+                ],
+                correct: 1,
+                explanation: "זוויות הבסיס במשולש שווה שוקיים שוות תמיד זו לזו. זוהי תכונה בסיסית וחשובה של משולש שווה שוקיים."
+            },
+            {
+                question: "אילו שלושה קווים מתלכדים לקו אחד במשולש שווה שוקיים כאשר הם יוצאים מקודקוד הראש ומגיעים לבסיס?",
+                options: [
+                    "גובה, חציון ותיכון",
+                    "רק גובה וחציון",
+                    "רק תיכון וחציון",
+                    "שלושה קווים נפרדים לחלוטין"
+                ],
+                correct: 0,
+                explanation: "במשולש שווה שוקיים, כאשר משרטטים מקודקוד הראש לבסיס: הגובה, החציון והתיכון מתלכדים לקו אחד. זהו קו הסימטריה של המשולש."
+            },
+            {
+                question: "מהו תפקידו של הקו המתלכד בתוך המשולש שווה השוקיים בהקשר של סימטריה?",
+                options: [
+                    "הוא מחלק את המשולש לשני משולשים שונים",
+                    "הוא יוצר ציר סימטריה שמחלק את המשולש לשני חלקים זהים",
+                    "הוא רק מעביר דרך מרכז המשולש",
+                    "אין לו תפקיד מיוחד"
+                ],
+                correct: 1,
+                explanation: "הקו המתלכד (גובה-חציון-תיכון) הוא ציר הסימטריה של המשולש, המחלק אותו לשני משולשים ישרי זווית חופפים לחלוטין."
+            },
+            {
+                question: "מהו סכום הזוויות הפנימיות בכל משולש, ובפרט במשולש שווה שוקיים?",
+                options: [
+                    "90 מעלות",
+                    "180 מעלות",
+                    "270 מעלות",
+                    "360 מעלות"
+                ],
+                correct: 1,
+                explanation: "סכום הזוויות הפנימיות בכל משולש הוא תמיד 180 מעלות. זה נכון גם למשולש שווה שוקיים: זווית הראש + 2 × זווית בסיס = 180°."
+            },
+            {
+                question: "אם זווית בסיס אחת במשולש שווה שוקיים היא 40 מעלות, מהו גודל זווית הראש?",
+                options: [
+                    "40 מעלות",
+                    "80 מעלות",
+                    "100 מעלות",
+                    "140 מעלות"
+                ],
+                correct: 2,
+                explanation: "זוויות הבסיס שוות, לכן שתיהן 40°. זווית הראש = 180° - (40° + 40°) = 180° - 80° = 100°."
+            },
+            {
+                question: "אם זווית הראש במשולש שווה שוקיים היא 100 מעלות, מהו גודל כל אחת מזוויות הבסיס?",
+                options: [
+                    "40 מעלות",
+                    "50 מעלות",
+                    "80 מעלות",
+                    "90 מעלות"
+                ],
+                correct: 0,
+                explanation: "סכום שתי זוויות הבסיס = 180° - 100° = 80°. כיוון שזוויות הבסיס שוות: כל זווית בסיס = 80° ÷ 2 = 40°."
+            },
+            {
+                question: "מה ההבדל בין שוק לבסיס במשולש שווה שוקיים?",
+                options: [
+                    "השוק תמיד קצר יותר מהבסיס",
+                    "השוקיים הם שתי הצלעות השוות, הבסיס הוא הצלע השלישית",
+                    "הבסיס תמיד קצר יותר מהשוק",
+                    "אין הבדל - כל הצלעות זהות"
+                ],
+                correct: 1,
+                explanation: "השוקיים הם שתי הצלעות השוות במשולש, והבסיס הוא הצלע השלישית. אורך הבסיס יכול להיות גדול, שווה או קטן מאורך השוקיים."
+            },
+            {
+                question: "במשולש שווה שוקיים ABC כאשר AB = AC, איזה מהקווים הבאים הוא ציר הסימטריה?",
+                options: [
+                    "הקו מ-A ל-BC",
+                    "הקו מ-B ל-AC", 
+                    "הקו מ-C ל-AB",
+                    "אין ציר סימטריה"
+                ],
+                correct: 0,
+                explanation: "ציר הסימטריה הוא הקו היורד מקודקוד הזווית בין השוקיים השוות (A) אל אמצע הבסיס (BC). קו זה הוא גם גובה, חציון ותיכון."
+            },
+            {
+                question: "מדוע הבנת תכונות המשולש שווה שוקיים חיונית לפתרון תרגילים?",
+                options: [
+                    "זה רק לידע כללי",
+                    "כי זה מאפשר לחשב זוויות וצלעות לא ידועות בקלות",
+                    "זה נחוץ רק בגיאומטריה מתקדמת",
+                    "זה לא באמת חשוב"
+                ],
+                correct: 1,
+                explanation: "הבנת התכונות מאפשרת לנו לזהות מערכות יחסים במשולש, לחשב זוויות ואורכים לא ידועים, ולפתור בעיות גיאומטריות ביעילות."
+            },
+            {
+                question: "במשולש שווה שוקיים, אם אחת מזוויות הבסיס היא זווית קהה (גדולה מ-90°), מה נכון לגבי זווית הראש?",
+                options: [
+                    "גם היא זווית קהה",
+                    "היא זווית ישרה בדיוק",
+                    "היא זווית חדה (קטנה מ-90°)",
+                    "זה מצב בלתי אפשרי"
+                ],
+                correct: 3,
+                explanation: "זה מצב בלתי אפשרי! אם זווית בסיס אחת קהה (>90°), אז שתי זוויות הבסיס יחד יהיו >180°, מה שמותיר סכום שלילי לזווית הראש. במשולש שווה שוקיים, זוויות הבסיס תמיד חדות או לכל היותר ישרות."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = -1;
+        let answered = false;
+
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            selectedOption = -1;
+            answered = false;
+            
+            document.getElementById('questionNumber').textContent = currentQuestionIndex + 1;
+            document.getElementById('questionIndex').textContent = currentQuestionIndex + 1;
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('totalQuestions').textContent = questions.length;
+            document.getElementById('totalQuestionsText').textContent = questions.length;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectOption(index);
+                optionDiv.id = `option-${index}`;
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('submitBtn').style.display = 'inline-block';
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('feedback').classList.add('hidden');
+            
+            updateProgressBar();
+        }
+
+        function selectOption(index) {
+            if (answered) return;
+            
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            document.getElementById(`option-${index}`).classList.add('selected');
+            selectedOption = index;
+        }
+
+        function submitAnswer() {
+            if (selectedOption === -1) {
+                alert('אנא בחר תשובה לפני המשך');
+                return;
+            }
+            
+            answered = true;
+            const question = questions[currentQuestionIndex];
+            const feedbackDiv = document.getElementById('feedback');
+            
+            document.querySelectorAll('.option').forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === selectedOption && selectedOption !== question.correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            if (selectedOption === question.correct) {
+                score++;
+                feedbackDiv.className = 'feedback correct';
+                feedbackDiv.innerHTML = `
+                    <strong>🎉 תשובה נכונה!</strong>
+                    <div class="explanation">${question.explanation}</div>
+                `;
+            } else {
+                feedbackDiv.className = 'feedback incorrect';
+                feedbackDiv.innerHTML = `
+                    <strong>❌ תשובה שגויה</strong><br>
+                    התשובה הנכונה היא: <strong>${question.options[question.correct]}</strong>
+                    <div class="explanation">${question.explanation}</div>
+                `;
+            }
+            
+            feedbackDiv.classList.remove('hidden');
+            document.getElementById('submitBtn').style.display = 'none';
+            
+            if (currentQuestionIndex < questions.length - 1) {
+                document.getElementById('nextBtn').classList.remove('hidden');
+            } else {
+                setTimeout(showResults, 2000);
+            }
+            
+            updateScore();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+            const percentage = Math.round((score / (currentQuestionIndex + 1)) * 100);
+            document.getElementById('percentage').textContent = percentage + '%';
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showResults() {
+            document.getElementById('questionContainer').classList.add('hidden');
+            document.getElementById('finalResults').classList.remove('hidden');
+            
+            const finalScore = `${score}/${questions.length}`;
+            const percentage = Math.round((score / questions.length) * 100);
+            
+            document.getElementById('finalScore').textContent = finalScore;
+            
+            let performanceClass, performanceText;
+            if (percentage >= 90) {
+                performanceClass = 'excellent';
+                performanceText = '🌟 מעולה! ידע מרשים במשולש שווה שוקיים!';
+            } else if (percentage >= 70) {
+                performanceClass = 'good';
+                performanceText = '👍 טוב מאוד! יש לך הבנה טובה בנושא.';
+            } else {
+                performanceClass = 'fair';
+                performanceText = '📚 כדאי לחזור על החומר ולנסות שוב.';
+            }
+            
+            const performanceDiv = document.getElementById('performanceMessage');
+            performanceDiv.className = `performance ${performanceClass}`;
+            performanceDiv.innerHTML = `
+                ${performanceText}<br>
+                <strong>אחוז הצלחה: ${percentage}%</strong>
+            `;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('finalResults').classList.add('hidden');
+            document.getElementById('questionContainer').classList.remove('hidden');
+            loadQuestion();
+            updateScore();
+        }
+
+        // התחלת החידון
+        window.onload = function() {
+            loadQuestion();
+        };
+    </script>
+</body>
+</html>
